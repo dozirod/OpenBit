@@ -67,7 +67,7 @@ Torrent files are stored in a separate repository (not inside this project).
 
 External torrents repository:
 
-- `https://github.com/your-username/openbit-downloads`
+- `https://github.com/dozirod/OpenLoads`
 
 After cloning or syncing that repository, place files into:
 
