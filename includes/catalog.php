@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/auth.php';
+
 if (!function_exists('openbit_h')) {
     function openbit_h(string $value): string
     {
@@ -62,6 +64,7 @@ if (!function_exists('openbit_render_catalog_page')) {
         $categoryDir = $baseDir . DIRECTORY_SEPARATOR . $category;
         $downloadPrefix = $basePrefix;
         $githubUrl = 'https://github.com/';
+        $currentUser = openbit_auth_user();
 
         $allFiles = [];
         $dirReadable = is_dir($categoryDir) && is_readable($categoryDir);
@@ -109,6 +112,7 @@ if (!function_exists('openbit_render_catalog_page')) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= openbit_h($title) ?></title>
+    <link rel="icon" type="image/svg+xml" href="<?= openbit_h($basePrefix . 'favicon.svg') ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -143,8 +147,13 @@ if (!function_exists('openbit_render_catalog_page')) {
                         <?= openbit_h($label) ?>
                     </a>
                 <?php endforeach; ?>
-                <a href="<?= openbit_h($basePrefix . 'login.php') ?>" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Login</a>
-                <a href="<?= openbit_h($basePrefix . 'register.php') ?>" class="rounded-lg bg-cyan-600 px-3 py-2 text-white transition hover:bg-cyan-500">Register</a>
+                <?php if ($currentUser): ?>
+                    <span class="hidden rounded-lg border border-slate-700 px-3 py-2 text-slate-300 sm:inline">Hi, <?= openbit_h((string)$currentUser['display_name']) ?></span>
+                    <a href="<?= openbit_h($basePrefix . 'logout.php') ?>" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Logout</a>
+                <?php else: ?>
+                    <a href="<?= openbit_h($basePrefix . 'login.php') ?>" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Login</a>
+                    <a href="<?= openbit_h($basePrefix . 'register.php') ?>" class="rounded-lg bg-cyan-600 px-3 py-2 text-white transition hover:bg-cyan-500">Register</a>
+                <?php endif; ?>
                 <a
                     href="<?= openbit_h($githubUrl) ?>"
                     target="_blank"
