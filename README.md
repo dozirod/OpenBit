@@ -63,7 +63,13 @@ http://localhost:8000
 
 ## Add Files
 
-Put torrent files into:
+Torrent files are stored in a separate repository (not inside this project).
+
+External torrents repository:
+
+- `https://github.com/your-username/openbit-downloads`
+
+After cloning or syncing that repository, place files into:
 
 - `downloads/games/`
 - `downloads/software/`
