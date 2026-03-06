@@ -10,7 +10,10 @@ OpenBit is a clean, dark-themed torrent listing website built with PHP and Tailw
 - File size formatting (B/KB/MB/GB)
 - Direct download button for each file
 - Pagination with pages under `pages/`
-- Basic `Login` and `Register` UI pages
+- Authentication system (register, login, logout)
+- CAPTCHA on registration (simple math challenge)
+- SQLite-based user storage
+- SVG favicon support (`favicon.svg`)
 
 ## Project Structure
 
@@ -21,13 +24,19 @@ openbit/
 |- software.php
 |- login.php
 |- register.php
+|- logout.php
+|- favicon.svg
 |- includes/
-|  `- catalog.php
+|  |- auth.php
+|  |- catalog.php
+|  `- db.php
 |- pages/
 |  |- games/
 |  |  `- index.php
 |  `- software/
 |     `- index.php
+|- data/
+|  `- openbit.sqlite
 `- downloads/
    |- games/
    `- software/
@@ -43,11 +52,16 @@ openbit/
 6. Page 2+ uses:
    - `pages/games/index.php?page=2`
    - `pages/software/index.php?page=2`
+7. User accounts are stored in `data/openbit.sqlite`.
+8. Database schema is created automatically on first use.
 
 ## Requirements
 
 - PHP 8.0+ (recommended)
 - Apache, Nginx, or PHP built-in server
+- At least one SQLite extension enabled:
+  - `pdo_sqlite` (preferred), or
+  - `sqlite3`
 
 ## Run Locally
 
@@ -60,6 +74,17 @@ Open in browser:
 ```text
 http://localhost:8000
 ```
+
+## Enable SQLite Extensions (Windows)
+
+If login/register shows database driver errors, enable SQLite in `php.ini`:
+
+```ini
+extension=sqlite3
+extension=pdo_sqlite
+```
+
+Then restart the PHP server.
 
 ## Add Files
 
