@@ -1,5 +1,28 @@
 <?php
+require __DIR__ . '/includes/auth.php';
+
 $githubUrl = 'https://github.com/';
+$currentUser = openbit_auth_user();
+$flashMessage = openbit_flash_get();
+
+if ($currentUser) {
+    header('Location: index.php');
+    exit;
+}
+
+$email = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string)($_POST['email'] ?? ''));
+    $password = (string)($_POST['password'] ?? '');
+
+    if (openbit_auth_login($email, $password, $error)) {
+        openbit_flash_set('Welcome back to OpenBit.');
+        header('Location: index.php');
+        exit;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +30,7 @@ $githubUrl = 'https://github.com/';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenBit | Login</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -57,10 +81,22 @@ $githubUrl = 'https://github.com/';
             <h1 class="text-2xl font-bold text-white">Sign in to OpenBit</h1>
             <p class="mt-2 text-sm text-slate-400">Enter your account details to continue.</p>
 
-            <form action="#" method="post" class="mt-6 space-y-4">
+            <?php if ($flashMessage): ?>
+                <div class="mt-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                    <?= htmlspecialchars($flashMessage, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($error !== ''): ?>
+                <div class="mt-4 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+                    <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="login.php" method="post" class="mt-6 space-y-4">
                 <div>
                     <label for="email" class="mb-2 block text-sm font-medium text-slate-300">Email</label>
-                    <input id="email" name="email" type="email" required class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-500" placeholder="you@example.com">
+                    <input id="email" name="email" type="email" required value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>" class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none placeholder:text-slate-500 focus:border-cyan-500" placeholder="you@example.com">
                 </div>
                 <div>
                     <label for="password" class="mb-2 block text-sm font-medium text-slate-300">Password</label>

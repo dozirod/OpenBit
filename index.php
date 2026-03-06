@@ -1,5 +1,9 @@
 <?php
+require __DIR__ . '/includes/auth.php';
+
 $githubUrl = 'https://github.com/';
+$currentUser = openbit_auth_user();
+$flashMessage = openbit_flash_get();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +11,7 @@ $githubUrl = 'https://github.com/';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenBit</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -34,8 +39,13 @@ $githubUrl = 'https://github.com/';
             <nav class="flex items-center gap-2 sm:gap-3 text-sm">
                 <a href="games.php" class="rounded-lg px-3 py-2 text-slate-300 transition hover:bg-slate-800 hover:text-white">Games</a>
                 <a href="software.php" class="rounded-lg px-3 py-2 text-slate-300 transition hover:bg-slate-800 hover:text-white">Software</a>
-                <a href="login.php" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Login</a>
-                <a href="register.php" class="rounded-lg bg-cyan-600 px-3 py-2 text-white transition hover:bg-cyan-500">Register</a>
+                <?php if ($currentUser): ?>
+                    <span class="hidden rounded-lg border border-slate-700 px-3 py-2 text-slate-300 sm:inline">Hi, <?= htmlspecialchars((string)$currentUser['display_name'], ENT_QUOTES, 'UTF-8') ?></span>
+                    <a href="logout.php" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Logout</a>
+                <?php else: ?>
+                    <a href="login.php" class="rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800 hover:text-white">Login</a>
+                    <a href="register.php" class="rounded-lg bg-cyan-600 px-3 py-2 text-white transition hover:bg-cyan-500">Register</a>
+                <?php endif; ?>
                 <a
                     href="<?= htmlspecialchars($githubUrl, ENT_QUOTES, 'UTF-8') ?>"
                     target="_blank"
@@ -53,6 +63,12 @@ $githubUrl = 'https://github.com/';
     </header>
 
     <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <?php if ($flashMessage): ?>
+            <section class="mb-6 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                <?= htmlspecialchars($flashMessage, ENT_QUOTES, 'UTF-8') ?>
+            </section>
+        <?php endif; ?>
+
         <section class="relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-8 sm:p-10">
             <div class="absolute -right-16 -top-16 h-44 w-44 rounded-full border border-cyan-400/20 bg-cyan-500/10 blur-2xl"></div>
             <div class="absolute -bottom-16 -left-16 h-52 w-52 rounded-full border border-indigo-400/20 bg-indigo-500/10 blur-2xl"></div>
@@ -71,8 +87,10 @@ $githubUrl = 'https://github.com/';
                 Create an account to save favorites, track downloads, and keep your own personal library organized.
             </p>
             <div class="mt-8 flex flex-wrap gap-3">
-                <a href="register.php" class="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500">Create Account</a>
-                <a href="login.php" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-800">Sign In</a>
+                <?php if (!$currentUser): ?>
+                    <a href="register.php" class="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500">Create Account</a>
+                    <a href="login.php" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-800">Sign In</a>
+                <?php endif; ?>
                 <a href="games.php" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:bg-slate-800">Explore Library</a>
             </div>
         </section>
@@ -101,18 +119,6 @@ $githubUrl = 'https://github.com/';
                 <h2 class="text-lg font-medium text-white">Software</h2>
                 <p class="mt-2 text-sm text-slate-400">Browse torrents from <code>downloads/software/</code>.</p>
             </a>
-        </section>
-
-        <section class="mt-6 rounded-2xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
-            <h2 class="text-2xl font-semibold text-white">Start using OpenBit in seconds</h2>
-            <p class="mt-3 max-w-2xl text-slate-400">
-                Sign up for a free account, open your preferred category, and use the search bar to find exactly what you need.
-                OpenBit is optimized for desktop and mobile, so your library is always accessible.
-            </p>
-            <div class="mt-6 flex flex-wrap gap-3">
-                <a href="register.php" class="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500">Register Now</a>
-                <a href="login.php" class="rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:bg-slate-800">Login</a>
-            </div>
         </section>
     </main>
 </body>
